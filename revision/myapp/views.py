@@ -44,6 +44,6 @@ def room(request,pk):
         if room is None:
             return HttpResponseNotFound("Room not found")
         context={'room':room}
-        return render(request,'base/room.html',context)
+        return render(request,'myapp/room.html',context)
     except ValueError:
         return HttpResponseNotFound("Invalid room ID")
