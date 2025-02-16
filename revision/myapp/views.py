@@ -17,3 +17,12 @@ class AboutView(View):
 
     def get(self,request):
         return HttpResponse("This page is using a CBV")
+rooms=[
+    {'id':1,'name':"Lets Learn Python"},
+    {"id":2,"name":"JavaScript is the best"},
+    {"id":3,"name":"Then why is C++ still used for DSA"}
+]
+def home2(request):
+    context={'rooms':rooms}
+    # This will render home2.html of global templates (passed a context dict)
+    return render(request,'home2.html',context)

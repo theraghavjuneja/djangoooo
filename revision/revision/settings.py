@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 # points to root(myproject/ inside whic i have manage.py, myproject, myapp etc.)
@@ -55,9 +55,7 @@ ROOT_URLCONF = 'revision.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR/'templates'
-        ],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')], 
         #  APP_DIRS = True → Tells Django to automatically look for templates/ inside each installed app (e.g., myapp/templates/).
 
         # Even if template inside an app then also it willl detect as APP_DIRS=TRue

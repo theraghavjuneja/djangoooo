@@ -9,4 +9,5 @@ urlpatterns = [  # Corrected variable name
     path('about/', views.about, name='about'),
     path('home_cbv/', views.HomeView.as_view(), name='home_cbv'),
     path('about_cbv/', views.AboutView.as_view(), name='about_cbv'),
+    path('home2/',views.home2,name='Home2')
 ]

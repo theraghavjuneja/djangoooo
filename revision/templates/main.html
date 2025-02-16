@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- include means the thing that is being done in navbar.html whi same yhan kro -->
+    
+    {% include 'navbar.html' %}
+    {% block content %} 
+    <!-- ABove block is where child templates insert content -->
+    {% endblock %}}
+</body>
+</html>
+
+<!-- Child templated can extend main.html -->
