@@ -2,6 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseNotFound
 from django.views import View
 from django.views.generic import TemplateView
+from .models import Room
+from .forms import RoomForm
+
 # Create your views here.
 # def home(request):
 #     return HttpResponse("Hey, You are Welcomed To The Home Page!!!")
@@ -26,23 +29,38 @@ from django.views.generic import TemplateView
 #     context={'rooms':rooms}
 #     # This will render home2.html of global templates (passed a context dict)
 #     return render(request,'home2.html',context)
-rooms=[
-    {'id':1,'name':"Lets Learn Python"},
-    {"id":2,"name":"JavaScript is the best"},
-    {"id":3,"name":"Then why is C++ still used for DSA"}
-]
-def home(request):
-    context={'rooms':rooms}
-    return render(request,'myapp/home.html',context)
+# rooms=[
+#     {'id':1,'name':"Lets Learn Python"},
+#     {"id":2,"name":"JavaScript is the best"},
+#     {"id":3,"name":"Then why is C++ still used for DSA"}
+# ]
+# def home(request):
+#     context={'rooms':rooms}
+#     return render(request,'myapp/home.html',context)
 # remember in app sepecific templates templates-> app name-> html files
 # if directly templates-> html that is treated global level thing
+# def room(request,pk):
+#     try:
+#         # next returns first itwrator jhn match and break
+#         room=next((i for i in rooms if i['id']==pk),None)
+#         if room is None:
+#             return HttpResponseNotFound("Room not found")
+#         context={'room':room}
+#         return render(request,'myapp/room.html',context)
+#     except ValueError:
+#         return HttpResponseNotFound("Invalid room ID")
+def home(request):
+    rooms=Room.objects.all()
+    context={'rooms':rooms}
+    return render(request,'myapp/home.html',context)
 def room(request,pk):
-    try:
-        # next returns first itwrator jhn match and break
-        room=next((i for i in rooms if i['id']==pk),None)
-        if room is None:
-            return HttpResponseNotFound("Room not found")
-        context={'room':room}
-        return render(request,'myapp/room.html',context)
-    except ValueError:
-        return HttpResponseNotFound("Invalid room ID")
+    room=Room.objects.get(id=pk)
+    context={'room':room}
+    return render(request,'myapp/room.html',context)
+def createRoom(request):
+    form=RoomForm()
+    if request.method=='POST':
+        print(request.POST)
+    context={'form':form}
+    print(form)
+    return render(request,'myapp/room_form.html',context)
