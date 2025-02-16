@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import (
+    render,redirect
+)
 from django.http import HttpResponse,HttpResponseNotFound
 from django.views import View
 from django.views.generic import TemplateView
@@ -58,9 +60,16 @@ def room(request,pk):
     context={'room':room}
     return render(request,'myapp/room.html',context)
 def createRoom(request):
-    form=RoomForm()
-    if request.method=='POST':
+    if request.methods=='POST':
         print(request.POST)
-    context={'form':form}
+        form=RoomForm(request.POST) #Bind form with submitted data in that pae
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form=RoomForm()
+    # form automatically generates that html
     print(form)
+    context={'form':form}
     return render(request,'myapp/room_form.html',context)
+

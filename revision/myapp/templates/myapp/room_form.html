@@ -1,0 +1,13 @@
+{% extends 'main.html'%}
+{% block content %}
+<div>
+    <form method="POST" action="">
+        {%csrf_token%}
+        <!-- converting form I am passing to p ans displaying -->
+        <!-- it expands to -->
+        <!-- <p>  and between code of this form</p> -->
+        {{form.as_p}}
+        <input type="submit" value="Submit">
+    </form>
+</div>
+{%endblock content%}
