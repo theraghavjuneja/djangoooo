@@ -38,7 +38,6 @@ def home(request):
 # if directly templates-> html that is treated global level thing
 def room(request,pk):
     try:
-        pk=int(pk)
         # next returns first itwrator jhn match and break
         room=next((i for i in rooms if i['id']==pk),None)
         if room is None:

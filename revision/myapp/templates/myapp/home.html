@@ -12,7 +12,10 @@
     <div>
         {% for room in rooms %}
         <div>
-            <h5>{{room.id}}-- corresponds to {{room.name}}</h5>
+            <!-- to add mapping  -->
+            <h5>
+                <a href="{% url 'room' room.id%}">{{room.id}}--{{room.name}}</a>
+            </h5>
         </div>
         {% endfor%}
     </div>
