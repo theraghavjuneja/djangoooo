@@ -60,7 +60,7 @@ def room(request,pk):
     context={'room':room}
     return render(request,'myapp/room.html',context)
 def createRoom(request):
-    if request.methods=='POST':
+    if request.method=='POST':
         print(request.POST)
         form=RoomForm(request.POST) #Bind form with submitted data in that pae
         if form.is_valid():
@@ -72,4 +72,23 @@ def createRoom(request):
     print(form)
     context={'form':form}
     return render(request,'myapp/room_form.html',context)
+def updateRoom(request,pk):
+    room=Room.objects.get(id=1)
+    if request.method=='POST':
+        form=RoomForm(request.POST,instance=room) # Here putting the new room
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form=RoomForm(instance=room) # Here loaded exisint data
+        # i.e. us room ki hi data we loaded so that its easy to change
+    context={'form':form}
+    return render(request,'myapp/room_form.html',context)
+# Above I used same html template for both deletion as well as updationg
+def deleteRoom(request,pk):
+    room=Room.objects.get(id=pk)
+    if request.method=='POST':
+        room.delete()
+        return redirect('home')
+    return render(request,'myapp/delete.html',{'obj':room})
 
