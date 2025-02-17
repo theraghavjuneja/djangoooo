@@ -41,6 +41,7 @@ def home(request):
     
 
 def loginPage(request):
+    context={}
     return render(request,'base/login_register.html',context)
 # now also add pk
 def room(request,pk):
