@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 # part 2 of db etc
 from .models import Room,Topic
 from django.db.models import Q
@@ -45,9 +46,14 @@ def home(request):
     room_count=rooms.count()
     context={'rooms':rooms,'topics':topics,'room_count':room_count}
     return render(request,'base/home.html',context)
-    
+
+# for both login and logout we are redirecting to same html only
+# thus in both endpoints I created a page name so which I can pass as context so that html template which know which section to render
 
 def loginPage(request):
+    page='login'
+    if request.user.is_authenticated:
+        return redirect('home')
     # for post
     if request.method=='POST':
         # i.e. user entered info
@@ -55,15 +61,24 @@ def loginPage(request):
         password=request.POST.get('password')
         try:
             user=User.objects.get(username=username)
-        except:
+        except User.DoesNotExist: #if the username is wrong
             messages.error(request,'User does not exist')
-        user=authenticate(request,username=user,password=password)
-        if user is not None:
+            return render(request, 'base/login_register.html')
+        user=authenticate(request,username=username,password=password)
+        if user is not None: 
             login(request,user)
             return redirect('home')
+        else: # it is trigerred when credentials wron
+            messages.error(request,'Username or password does not exist')
     # for get
-    context={}
+    context={'page':page}
     return render(request,'base/login_register.html',context)
+def logoutUser(request):
+    logout(request)
+    return redirect('home')
+def registerUser(request):
+    page='register'
+    return render(request,'base/login_register.html')
 # now also add pk
 def room(request,pk):
     # return HttpResponse('ROOM')
@@ -81,6 +96,7 @@ def room(request,pk):
     room=Room.objects.get(id=pk)
     context={'room':room}
     return render(request,'base/room.html',context)
+@login_required(login_url='login')
 def createRoom(request):
     # send user back to home page if he is valid
     form=RoomForm()
@@ -97,10 +113,13 @@ def createRoom(request):
     return render(request,'base/room_form.html',context)
     # context={}
     # return render(request,'base/room_form.html',context)
+@login_required(login_url='login')
 def updateRoom(request,pk):
     room=Room.objects.get(id=pk)
     form=RoomForm(instance=room)
     # prefelling this form with that room value
+    if request.user!=room.host:
+        return HttpResponse('You cant update somebody else room')
     if request.method=='POST':
         form=RoomForm(request.POST,instance=room)
         # here we replace original data by this
@@ -109,8 +128,11 @@ def updateRoom(request,pk):
             return redirect('home')
     context={'form':form}
     return render(request,'base/room_form.html',context)
+@login_required(login_url='login')
 def deleteRoom(request,pk):
     room=Room.objects.get(id=pk)
+    if request.user!=room.host:
+        return HttpResponse('You cant delete somebody else room')
     if request.method=='POST':
         room.delete()
         return redirect('home')

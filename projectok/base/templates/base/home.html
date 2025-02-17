@@ -30,8 +30,10 @@
         <div>
             {%for room in rooms %}
                 <div>
+                    {% if request.user == room.host%}
                     <a href="{% url 'update-room' room.id%}">EDIT THIS ROOM</a>
                     <a href="{% url 'delete-room' room.id%}">DELETE</a>
+                    {% endif %}
                     <!-- go to /room/room.id for a href -->
                     <!-- remember kii /room/ means isi web ka /room/ -->
                     <!-- <h5>{{room.id}} --<a href="/room/{{room.id}}">{{room.name}}</a> </h5> -->
