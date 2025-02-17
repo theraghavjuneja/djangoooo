@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 # part 2 of db etc
-from .models import Room
+from .models import Room,Topic
 # Create your views here.
 from django.http import HttpResponse
 from .forms import RoomForm
@@ -25,8 +25,10 @@ def home(request):
     # return render(request,'base/home.html',context)
 
     # to get access to all rooms
+    
     rooms=Room.objects.all()
-    context={'rooms':rooms}
+    topics=Topic.objects.all()
+    context={'rooms':rooms,'topics':topics}
     return render(request,'base/home.html',context)
 
 
@@ -35,7 +37,7 @@ def room(request,pk):
     # return HttpResponse('ROOM')
     # return render(request,'room.html')
     # added at last this 
-    # for i in rooms:
+    # for i in room s:
     #     if i['id']==int(pk):
     #         room=i
     # # whatever id matches wo 
