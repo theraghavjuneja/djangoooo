@@ -4,6 +4,11 @@ from django.contrib import messages
 # part 2 of db etc
 from .models import Room,Topic
 from django.db.models import Q
+from django.contrib.auth import (
+    authenticate,
+    login,
+    logout
+)
 # Create your views here.
 from django.http import HttpResponse
 from .forms import RoomForm
@@ -43,6 +48,7 @@ def home(request):
     
 
 def loginPage(request):
+    # for post
     if request.method=='POST':
         # i.e. user entered info
         username=request.POST.get('username')
@@ -51,7 +57,11 @@ def loginPage(request):
             user=User.objects.get(username=username)
         except:
             messages.error(request,'User does not exist')
-
+        user=authenticate(request,username=user,password=password)
+        if user is not None:
+            login(request,user)
+            return redirect('home')
+    # for get
     context={}
     return render(request,'base/login_register.html',context)
 # now also add pk
