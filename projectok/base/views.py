@@ -1,4 +1,6 @@
 from django.shortcuts import render,redirect
+from django.contrib.auth.models import User
+from django.contrib import messages
 # part 2 of db etc
 from .models import Room,Topic
 from django.db.models import Q
@@ -41,6 +43,15 @@ def home(request):
     
 
 def loginPage(request):
+    if request.method=='POST':
+        # i.e. user entered info
+        username=request.POST.get('username')
+        password=request.POST.get('password')
+        try:
+            user=User.objects.get(username=username)
+        except:
+            messages.error(request,'User does not exist')
+
     context={}
     return render(request,'base/login_register.html',context)
 # now also add pk
