@@ -40,7 +40,8 @@ def home(request):
     return render(request,'base/home.html',context)
     
 
-
+def loginPage(request):
+    return render(request,'base/login_register.html',context)
 # now also add pk
 def room(request,pk):
     # return HttpResponse('ROOM')
