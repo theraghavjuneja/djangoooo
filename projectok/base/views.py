@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 # part 2 of db etc
 from .models import Room,Topic
+from django.db.models import Q
 # Create your views here.
 from django.http import HttpResponse
 from .forms import RoomForm
@@ -25,11 +26,19 @@ def home(request):
     # return render(request,'base/home.html',context)
 
     # to get access to all rooms
-    
-    rooms=Room.objects.all()
+    q=request.GET.get('q') if request.GET.get('q')!=None else ''
+    # i contains just make sure even if we do pyt to wo search kre
+    # there are various options start with ends with etc
+    rooms=Room.objects.filter(
+        Q(topic__name__icontains=q)|
+        Q(name__icontains=q)|
+        Q(description__icontains=q))
+    # rooms=Room.objects.all()
     topics=Topic.objects.all()
-    context={'rooms':rooms,'topics':topics}
+    room_count=rooms.count()
+    context={'rooms':rooms,'topics':topics,'room_count':room_count}
     return render(request,'base/home.html',context)
+    
 
 
 # now also add pk
