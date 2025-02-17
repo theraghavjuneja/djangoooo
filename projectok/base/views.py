@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
 # part 2 of db etc
 from .models import Room,Topic
 from django.db.models import Q
@@ -77,8 +78,8 @@ def logoutUser(request):
     logout(request)
     return redirect('home')
 def registerUser(request):
-    page='register'
-    return render(request,'base/login_register.html')
+    form=UserCreationForm()
+    return render(request,'base/login_register.html',{'form':form})
 # now also add pk
 def room(request,pk):
     # return HttpResponse('ROOM')
