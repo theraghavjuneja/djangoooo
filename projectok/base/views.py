@@ -58,7 +58,7 @@ def loginPage(request):
     # for post
     if request.method=='POST':
         # i.e. user entered info
-        username=request.POST.get('username')
+        username=request.POST.get('username').lower()
         password=request.POST.get('password')
         try:
             user=User.objects.get(username=username)
@@ -79,6 +79,17 @@ def logoutUser(request):
     return redirect('home')
 def registerUser(request):
     form=UserCreationForm()
+    if request.method=='POST':
+        form=UserCreationForm(request.POST)
+        if form.is_valid():
+            # to access the user 
+            user=form.save(commit=False)
+            user.username=user.username.lower()
+            user.save()
+            login(request,user)
+            return redirect('home')
+        else:
+            messages.error(request,'Sorry an error occured during registration')
     return render(request,'base/login_register.html',{'form':form})
 # now also add pk
 def room(request,pk):
