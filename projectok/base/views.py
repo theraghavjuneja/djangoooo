@@ -4,7 +4,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 # part 2 of db etc
-from .models import Room,Topic
+from .models import (
+    Room,
+    Topic,
+    Message)
 from django.db.models import Q
 from django.contrib.auth import (
     authenticate,
@@ -83,7 +86,8 @@ def registerUser(request):
         form=UserCreationForm(request.POST)
         if form.is_valid():
             # to access the user 
-            user=form.save(commit=False)
+            user=form.save(commit=False) #gives an unsaved user object
+            # Now Lowering
             user.username=user.username.lower()
             user.save()
             login(request,user)
@@ -105,8 +109,31 @@ def room(request,pk):
 
     # to get a room (Example if /1 called to get room1 (id))
     # id auto generated
-    room=Room.objects.get(id=pk)
-    context={'room':room}
+    room=Room.objects.get(id=pk) # Retrieve a room object id=pk
+    # SUppose Message linked to Room using FK, then a reverse relation also created called message_set
+    # By adding related name query we can customize it
+    # used to retrieve that
+    room_messages=room.message_set.all().order_by('-created')
+    # To avoid flash messages being shown
+
+
+
+
+
+
+
+
+
+    if request.method=='POST':
+        message=Message.objects.create(
+            user=request.user,
+            room=room,
+            body=request.POST.get('body')
+        )
+
+
+
+    context={'room':room,'room_messages':room_messages}
     return render(request,'base/room.html',context)
 @login_required(login_url='login')
 def createRoom(request):
