@@ -35,6 +35,10 @@ class Message(models.Model):
     body=models.TextField()
     updated=models.DateTimeField(auto_now=True)
     created=models.DateTimeField(auto_now_add=True)
+    class Meta:
+        # dash means inverted newest updated sbe phle aayege
+        
+        ordering=['-updated','-created']
     def __str__(self):
         # display only first 50 char, (if a long message)
         return self.body[0:50]

@@ -1,0 +1,19 @@
+<div>
+    {%for room in rooms %}
+        <div>
+            {% if request.user == room.host%}
+            <a href="{% url 'update-room' room.id%}">EDIT THIS ROOM</a>
+            <a href="{% url 'delete-room' room.id%}">DELETE</a>
+            {% endif %}
+            <!-- go to /room/room.id for a href -->
+            <!-- remember kii /room/ means isi web ka /room/ -->
+            <!-- <h5>{{room.id}} --<a href="/room/{{room.id}}">{{room.name}}</a> </h5> -->
+            <!-- accessing by name -->
+            <!-- span added later on when I was operating with DB -->
+            <a href="{% url 'user-profile' room.host.id %}">@{{room.host.username}}</a>
+            <h5>{{room.id}} --<a href="{% url 'room' room.id%}">{{room.name}}</a> </h5>
+            <small>{{room.topic.name}}</small>
+            <hr>
+        </div>
+    {% endfor%}
+</div>
