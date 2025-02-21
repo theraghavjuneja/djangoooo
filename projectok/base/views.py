@@ -114,7 +114,8 @@ def room(request,pk):
     # By adding related name query we can customize it
     # used to retrieve that
     room_messages=room.message_set.all().order_by('-created')
-    # To avoid flash messages being shown
+    # To avoid flash messages being shown we replaces messages by room_messages
+    participants=room.participants.all() #many to many-> can directly do .all() 
 
 
 
@@ -125,15 +126,19 @@ def room(request,pk):
 
 
     if request.method=='POST':
+        # i will be creating a message object with user room and message bid
         message=Message.objects.create(
             user=request.user,
             room=room,
             body=request.POST.get('body')
         )
+        # i can add this user in room
+        room.participants.add(request.user)
+        return redirect('room',pk=room.id)
 
 
 
-    context={'room':room,'room_messages':room_messages}
+    context={'room':room,'room_messages':room_messages,'participants':participants}
     return render(request,'base/room.html',context)
 @login_required(login_url='login')
 def createRoom(request):
@@ -177,3 +182,13 @@ def deleteRoom(request,pk):
         return redirect('home')
     
     return render(request,'base/delete.html',{'obj':room})
+@login_required(login_url='login')
+def deleteMessage(request,pk):
+    message=Message.objects.get(id=pk)
+    if request.user!=message.user:
+        return HttpResponse('You are not allowed here')
+    if request.method=='POST':
+        message.delete()
+        return redirect('home')
+    
+    return render(request,'base/delete.html',{'obj':message})

@@ -14,8 +14,8 @@ class Room(models.Model):
     # agar niche hota to use 'Topic' , on_delete= jo bhi i.e. 'Topic' in ''
     name=models.CharField(max_length=200)
     description=models.TextField(null=True,blank=True)
-    # participants=
-
+    # related name allows u to reference this relationship from user model
+    participants=models.ManyToManyField(User,related_name='participants',blank=True)
     # auto_now means whenever field change store
     updated=models.DateTimeField(auto_now=True)
     # now add means jab add hua bas tab store, not when edited
