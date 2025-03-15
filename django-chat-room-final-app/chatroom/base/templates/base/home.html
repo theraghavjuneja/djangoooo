@@ -1,0 +1,13 @@
+{% extends 'main.html' %}
+<!-- {% include 'navbar.html'%} -->
+{% block content %}
+<!-- If you can see, this home template get added in container div wrt main -->
+<div>
+    {% for room in rooms %}
+    <!-- 3 divs get created -->
+    <div>
+        <h5>{{room.id}} ---<a href="{% url 'room' room.id%}">{{room.name}}</a></h5>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %} -->

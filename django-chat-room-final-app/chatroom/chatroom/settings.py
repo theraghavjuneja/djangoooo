@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # dont forget to add
+    'base.apps.BaseConfig'
 ]
 
 # 
@@ -56,7 +58,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR/'templates'
+            BASE_DIR/"templates"
+            # BASE_DIR / "base/templates"
         ],
         'APP_DIRS': True, # look for templates inside each app's templates/
         'OPTIONS': {
