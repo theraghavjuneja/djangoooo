@@ -1,10 +1,31 @@
 from django.shortcuts import render,redirect
+from django.db.models import Q #with q we can wrap search parameyers or/and
 from django.http import HttpResponse
-from .models import Room
+from .models import Room,Topic
 from .forms import RoomForm
+from django.contrib.auth.models import User
+from django.contrib import messages
+def loginPage(request):
+    if request.method=='POST':
+        username=request.POST.get('username')
+        password=request.POST.get('password')
+        try:
+            user=User.objects.get(username=username)
+        except:
+            messages.error(request,'User doesnt exist')
+    context={}
+    return render(request,'base/login_register.html',context)
+
 def home(request):
-    rooms=Room.objects.all()
-    context={'rooms':rooms}
+    q=request.GET.get('q') if request.GET.get('q')!=None else '' # to get the query i.e. ?q="what"
+    # rooms=Room.objects.all()
+    rooms=Room.objects.filter(
+        Q(topic__name__icontains=q)|
+        Q(name__icontains=q)|
+        Q(description__icontains=q))
+    room_count=rooms.count() #BETTER THAN PYTOON LEN
+    topics=Topic.objects.all()
+    context={'rooms':rooms,'topics':topics,'room_count':room_count}
     print(context)
     return render(request,'base/home.html',context)
 def room(request,pk):
