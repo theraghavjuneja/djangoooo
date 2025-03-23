@@ -6,12 +6,23 @@
     <title>Document</title>
 </head>
 <body>
-    {% include 'navbar.html' %} <!--Navbar included on all page-->
+    {% include 'navbar.html' %} <!-- Navbar included on all pages -->
+
+    <!-- This section is for flash messages -->
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
     <div class="container">
         {% block content %}
-        <!-- Child templates will override this section-->
+        <!-- Child templates will override this section -->
         {% endblock %}
     </div>
+
     <footer>
         <p>© 2025 My Website</p>
     </footer>
