@@ -58,6 +58,7 @@ def createRoom(request):
             return redirect ('home') # Redirect used since I want to send the user to other page
     context={'form':form}
     return render(request,'base/room_form.html',context) # I want to render this page
+@login_required(login_url='login')
 def updateRoom(request,pk):
     '''
     pk: To specify what room are we updating 
@@ -66,6 +67,9 @@ def updateRoom(request,pk):
     '''
     room=Room.objects.get(id=pk) #get the room id=pk
     form=RoomForm(instance=room)
+    if request.user!=room.host:
+        
+        return HttpResponse('You are not allowed here')
     if request.method=='POST':
         form=RoomForm(request.POST,instance=room) #need to specify instance so that django can validate
         if form.is_valid():
@@ -73,8 +77,11 @@ def updateRoom(request,pk):
             return redirect('home')
     context={'form':form}
     return render(request,'base/room_form.html',context)
+@login_required(login_url='login')
 def deleteRoom(request,pk):
     room=Room.objects.get(id=pk)
+    if request.user!=room.host:
+        return HttpResponse('You are not allowed here')
     if request.method=='POST':
         room.delete()
         return redirect('home')
