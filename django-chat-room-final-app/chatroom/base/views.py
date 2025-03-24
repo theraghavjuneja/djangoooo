@@ -2,14 +2,18 @@ from django.shortcuts import render,redirect
 from django.db.models import Q #with q we can wrap search parameyers or/and
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from .models import Room,Topic
+from .models import Room,Topic,Message
 from .forms import RoomForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.forms import UserCreationForm
 def loginPage(request):
+    page='login'
+    if request.user.is_authenticated:
+        return redirect('home')
     if request.method=='POST':
-        username=request.POST.get('username')
+        username=request.POST.get('username').lower()
         password=request.POST.get('password')
         try:
             user=User.objects.get(username=username)
@@ -23,11 +27,25 @@ def loginPage(request):
             messages.error(request,'Username or password doesnt exist')
 
 
-    context={}
+    context={'page':page}
     return render(request,'base/login_register.html',context)
 def logoutUser(request):
     logout(request)
     return redirect('home') 
+def registerUser(request):
+    # page='register'
+    form=UserCreationForm()
+    if request.method=='POST':
+        form=UserCreationForm(request.POST)
+        if form.is_valid():
+            user=form.save(commit=False) 
+            user.username=user.username.lower()
+            user.save()
+            login(request,user) #login the necessary user
+            return redirect('home')
+        else:
+            messages.error(request,'An error occured during registration')
+    return render(request,'base/login_register.html',{'form':form})
 def home(request):
     q=request.GET.get('q') if request.GET.get('q')!=None else '' # to get the query i.e. ?q="what"
     # rooms=Room.objects.all()
@@ -42,7 +60,18 @@ def home(request):
     return render(request,'base/home.html',context)
 def room(request,pk):
     room=Room.objects.get(id=pk) # get the room having id=pk
-    context={'room':room}
+    # retrieve all messages related to a specific room object
+    room_messages=room.message_set.all().order_by('-created')
+    if request.method=='POST':
+        message=Message.objects.create(
+            user=request.user,
+            room=room,
+            body=request.POST.get('body')
+        )
+        # redirect reloads the page
+        return redirect('room',pk=room.id)
+    print(room_messages)
+    context = {'room': room, 'room_messages': room_messages}
     return render(request,'base/room.html',context)
 @login_required(login_url='login')
 def createRoom(request):
