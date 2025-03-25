@@ -55,7 +55,14 @@ def home(request):
         Q(description__icontains=q))
     room_count=rooms.count() #BETTER THAN PYTOON LEN
     topics=Topic.objects.all()
-    context={'rooms':rooms,'topics':topics,'room_count':room_count}
+    # room_messages=Message.objects.all()
+    room_messages=Message.objects.filter(Q(room__topic__name__icontains=q)) 
+    '''
+    Explanation" say there are subreddit kind of coding->javascript 
+    Javascript may have many rooms, so based on javascript, show recent activity of javascript based rooms
+    '''
+
+    context={'rooms':rooms,'topics':topics,'room_count':room_count,'room_messages':room_messages}
     print(context)
     return render(request,'base/home.html',context)
 def room(request,pk):
