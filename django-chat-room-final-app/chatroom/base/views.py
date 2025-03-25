@@ -62,16 +62,18 @@ def room(request,pk):
     room=Room.objects.get(id=pk) # get the room having id=pk
     # retrieve all messages related to a specific room object
     room_messages=room.message_set.all().order_by('-created')
+    participants=room.participants.all() # to get all the participants
     if request.method=='POST':
         message=Message.objects.create(
             user=request.user,
             room=room,
             body=request.POST.get('body')
         )
+        room.participants.add(request.user) # this user will be added now if not already
         # redirect reloads the page
         return redirect('room',pk=room.id)
     print(room_messages)
-    context = {'room': room, 'room_messages': room_messages}
+    context = {'room': room, 'room_messages': room_messages,'participants':participants}
     return render(request,'base/room.html',context)
 @login_required(login_url='login')
 def createRoom(request):
@@ -113,5 +115,14 @@ def deleteRoom(request,pk):
         return HttpResponse('You are not allowed here')
     if request.method=='POST':
         room.delete()
+        return redirect('home')
+    return render(request,'base/delete.html',{'obj':room})
+@login_required(login_url='login')
+def deleteMessage(request,pk):
+    message=Message.objects.get(id=pk)
+    if request.user!=message.user:
+        return HttpResponse("you are not allowed here")
+    if request.method=='POST':
+        message.delete()
         return redirect('home')
     return render(request,'base/delete.html',{'obj':room})
