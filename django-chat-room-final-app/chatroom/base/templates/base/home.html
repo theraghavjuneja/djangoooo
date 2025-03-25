@@ -11,52 +11,19 @@
 <div class="home-container">
     <!-- Browse Topics Section -->
     <div>
-        <h3>Browse Topics</h3>
-        <hr>
-        <div>
-            <a href="{% url 'home' %}">All</a>
-        </div>
-        {% for topic in topics %}
-        <div>
-            <a href="{% url 'home' %}?q={{ topic.name }}">{{ topic.name }}</a>
-        </div>
-        {% endfor %}  <!-- ✅ Properly closing the loop -->
+        {% include 'base/topic_components.html' %}
     </div>
 
     <!-- Rooms Section -->
     <div>
         <h5>{{room_count}} rooms available</h5>
         <a href="{% url 'create-room' %}">Create Room</a>
-        <div>
-            {% for room in rooms %}
-            <div>
-                {% if request.user == room.host %}
-                <a href="{% url 'update-room' room.id %}">Edit</a>
-                <a href="{% url 'delete-room' room.id %}">Delete</a>
-                {% endif %}
-                <span>@{{ room.host.username }}</span>
-                <h5>{{ room.id }} --- <a href="{% url 'room' room.id %}">{{ room.name }}</a></h5>
-                <small>{{ room.topic.name }}</small>
-                <hr>
-            </div>
-            {% endfor %}
-        </div>
+        {% include 'base/feed_component.html' %}
+        
     </div>
     <div>
-        <h3>Recent Activity</h3>
-        <hr>
-        {% for message in room_messages %}
-        <div>
-            <small>@{{message.user}} {{messgae.created|timesince}}</small>
-            <small>replied to" {{message.room}}</small>
-            {% if request.user == message.user %}
-            <p>{{message}}</p> <!--  will output first 50 chars, remember that 0:50 thing? -->
-            <a href="{% url 'delete-message' message.id %}">Delete</a>
-            {% endif %}
-            <hr>
-            
-        </div>
-        {% endfor %}
+        <!-- this code added to activity html -->
+        {% include 'base/activity_component.html' %}
     </div>
 </div>
 
