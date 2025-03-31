@@ -92,8 +92,12 @@ def createRoom(request):
         if form.is_valid():
             # form.save() will automatically save the room
             # provided that RoomForm is a valid model having a class meta
-            form.save()
-            return redirect ('home') # Redirect used since I want to send the user to other page
+            # form.save()
+            # return redirect ('home') # Redirect used since I want to send the user to other page
+            room=form.save(commit=False)
+            room.host=request.user # set host to user logged in currently
+            room.save()
+            return redirect('home')
     context={'form':form}
     return render(request,'base/room_form.html',context) # I want to render this page
 @login_required(login_url='login')
@@ -133,3 +137,12 @@ def deleteMessage(request,pk):
         message.delete()
         return redirect('home')
     return render(request,'base/delete.html',{'obj':room})
+
+def userProfile(request,pk):
+    user=User.objects.get(id=pk)
+    rooms=user.room_set.all()
+    room_messages=user.message_set.all()
+    topics=Topic.objects.all()
+    context={'user':user,'rooms':rooms,'room_messages':room_messages,'topics':topics}
+
+    return render(request,'base/profile.html',context)
